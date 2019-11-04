@@ -1,0 +1,59 @@
+{
+  "name": "@expect.tv/mobile",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A suite of apps and tools to discover great movies and TV shows",
+  "bugs": {
+    "url": "https://github.com/avidenie/expect.tv-mobile/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avidenie/expect.tv-mobile.git"
+  },
+  "author": "Adrian Videnie <avidenie@gmail.com>",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "release": "standard-version",
+    "start": "react-native start",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "dependencies": {
+    "react": "16.8.1",
+    "react-native": "0.61.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/runtime": "^7.5.0",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "@commitlint/prompt": "^8.2.0",
+    "@react-native-community/eslint-config": "^0.0.3",
+    "babel-jest": "^24.1.0",
+    "commitizen": "^4.0.3",
+    "husky": "^3.0.9",
+    "jest": "^24.1.0",
+    "metro-react-native-babel-preset": "^0.51.1",
+    "react-test-renderer": "16.8.1",
+    "standard-version": "^7.0.0"
+  }
+}
