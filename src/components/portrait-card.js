@@ -4,7 +4,14 @@ import { useState } from 'react'
 
 const Container = styled.View(
   {
-    aspectRatio: 1000 / 1426
+    aspectRatio: 1000 / 1426,
+    elevation: 2,
+    marginBottom: 1,
+    marginTop: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41
   },
   props => ({
     width: props.width
