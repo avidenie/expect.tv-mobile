@@ -1,6 +1,5 @@
 import styled from '@emotion/native'
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 const Container = styled.View(
   {
@@ -71,9 +70,10 @@ const FallbackCard = ({ item }) => {
   )
 }
 
-const PortraitCard = ({ item, width }) => {
+const PosterCard = ({ item, width }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(false)
+
   return (
     <Container width={width}>
       {item.images.poster && !isError && !isLoaded && (
@@ -91,4 +91,4 @@ const PortraitCard = ({ item, width }) => {
   )
 }
 
-export default PortraitCard
+export default PosterCard
