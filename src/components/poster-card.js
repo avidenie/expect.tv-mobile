@@ -1,5 +1,7 @@
 import styled from '@emotion/native'
+import qs from 'querystringify'
 import React, { useState } from 'react'
+import { PixelRatio } from 'react-native'
 
 const Container = styled.View(
   {
@@ -45,6 +47,24 @@ const Logo = styled.Image({
   resizeMode: 'cover'
 })
 
+function getImageWidth(width, scale = 1) {
+  const imageWidths = [240, 480, 720, 1200, 1440, 1680, 1920]
+  const pixelWidth = PixelRatio.getPixelSizeForLayoutSize(width) * scale
+  let imageWidth = imageWidths.find(imageWidth => pixelWidth < imageWidth)
+  if (imageWidth === -1) {
+    imageWidth = 1920
+  }
+  return imageWidth
+}
+
+function getImageUrl(imageUrl, imageParams = {}) {
+  const params = {
+    url: imageUrl,
+    ...imageParams
+  }
+  return `https://images.weserv.nl/${qs.stringify(params, true)}`
+}
+
 const LoadingCard = ({ item }) => {
   return (
     <FallbackContainer>
@@ -53,15 +73,19 @@ const LoadingCard = ({ item }) => {
   )
 }
 
-const FallbackCard = ({ item }) => {
+const FallbackCard = ({ item, width }) => {
   const [isError, setIsError] = useState(false)
+  const logoWidth = getImageWidth(width, 0.8)
   return (
     <FallbackContainer>
       {(!item.images.logo || isError) && <Title>{item.title}</Title>}
       {item.images.logo && !isError && (
         <Logo
           source={{
-            uri: item.images.logo
+            uri: getImageUrl(item.images.logo, {
+              w: logoWidth,
+              h: Math.ceil(logoWidth * 31 / 80)
+            })
           }}
           onError={() => setIsError(true)}
         />
@@ -73,6 +97,7 @@ const FallbackCard = ({ item }) => {
 const PosterCard = ({ item, width }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(false)
+  const imageWidth = getImageWidth(width)
 
   return (
     <Container width={width}>
@@ -81,12 +106,16 @@ const PosterCard = ({ item, width }) => {
       )}
       {item.images.poster && !isError && (
         <PosterImage
-          source={{ uri: item.images.poster }}
+          source={{ uri: getImageUrl(item.images.poster, {
+            w: imageWidth,
+            h: Math.ceil(imageWidth * 1.426),
+            fit: 'cover'
+          }) }}
           onLoad={() => setIsLoaded(true)}
           onError={() => setIsError(true)}
         />
       )}
-      {(!item.images.poster || isError) && <FallbackCard item={item} />}
+      {(!item.images.poster || isError) && <FallbackCard item={item} width={width} />}
     </Container>
   )
 }
