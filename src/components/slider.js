@@ -48,14 +48,16 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
         <FlatList
           contentContainerStyle={styles.contentContainerStyle}
           data={data[contentKey]}
+          decelerationRate="fast"
           horizontal={true}
           initialNumToRender={columns + 1}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={item => item.tmdbId.toString()}
           renderItem={({ item }) => (
             <PosterCard item={item} width={columnWidth} />
           )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
           showsHorizontalScrollIndicator={false}
+          snapToInterval={columnWidth + 8}
         />
       )}
     </>
