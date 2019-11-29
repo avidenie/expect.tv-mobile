@@ -24,7 +24,12 @@ const Container = styled.View({
 })
 
 const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
-  const { loading, error, data } = useQuery(query)
+  const { loading, error, networkStatus, data, fetchMore } = useQuery(query, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      page: 1
+    }
+  })
   const [{ width }, onLayout] = useLayout()
   const columns = compact ? (width >= 600 ? 8 : 4) : width >= 600 ? 6 : 3
   const columnWidth = (width - 32 - (columns - 1) * 8) / columns
@@ -42,12 +47,12 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
       <Container onLayout={onLayout}>
         {title && <Title>{title}</Title>}
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
-        {loading && <Text>Loading...</Text>}
+        {networkStatus === 1 && <Text>Loading...</Text>}
       </Container>
-      {!loading && (
+      {networkStatus !== 1 && (
         <FlatList
           contentContainerStyle={styles.contentContainerStyle}
-          data={data[contentKey]}
+          data={data[contentKey].results}
           decelerationRate="fast"
           horizontal={true}
           initialNumToRender={columns + 1}
@@ -58,6 +63,37 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
           )}
           showsHorizontalScrollIndicator={false}
           snapToInterval={columnWidth + 8}
+          onEndReachedThreshold={0.4}
+          onEndReached={() => {
+            const maxPage = Math.min(5, data[contentKey].pageInfo.totalPages)
+            if (
+              networkStatus !== 3 &&
+              data[contentKey].pageInfo.page < maxPage
+            ) {
+              fetchMore({
+                variables: {
+                  page: data[contentKey].pageInfo.page + 1
+                },
+                updateQuery: (prev, { fetchMoreResult }) => {
+                  if (!fetchMoreResult) {
+                    return prev
+                  } else {
+                    return {
+                      ...prev,
+                      [contentKey]: {
+                        ...prev[contentKey],
+                        results: [
+                          ...prev[contentKey].results,
+                          ...fetchMoreResult[contentKey].results
+                        ],
+                        pageInfo: fetchMoreResult[contentKey].pageInfo
+                      }
+                    }
+                  }
+                }
+              })
+            }
+          }}
         />
       )}
     </>
