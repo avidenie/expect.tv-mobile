@@ -1,15 +1,10 @@
-import styled from '@emotion/native'
 import React from 'react'
-import { ScrollView } from 'react-native'
+import { SafeAreaView, ScrollView } from 'react-native'
 import Slider from '../components/slider'
 import { GET_POPULAR_MOVIES, GET_POPULAR_TV_SHOWS } from '../graphql/queries'
 
-const Container = styled.SafeAreaView`
-  background-color: ${props => props.theme.background};
-`
-
 const App = () => (
-  <Container>
+  <SafeAreaView>
     <ScrollView>
       <Slider
         title="Most popular movies"
@@ -24,7 +19,7 @@ const App = () => (
         compact={true}
       />
     </ScrollView>
-  </Container>
+  </SafeAreaView>
 )
 
 export default App

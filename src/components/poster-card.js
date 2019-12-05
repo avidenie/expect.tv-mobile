@@ -1,51 +1,67 @@
-import styled from '@emotion/native'
 import qs from 'querystringify'
 import React, { useState } from 'react'
-import { PixelRatio } from 'react-native'
+import { Image, PixelRatio, Text, View } from 'react-native'
 
-const Container = styled.View(
-  {
-    aspectRatio: 1000 / 1426,
-    elevation: 2,
-    marginBottom: 1,
-    marginTop: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41
-  },
-  props => ({
-    width: props.width
-  })
-)
-const PosterImage = styled.Image({
-  flex: 1,
-  borderRadius: 5,
-  resizeMode: 'cover'
-})
-const FallbackContainer = styled.View({
-  position: 'absolute',
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-  alignItems: 'center',
-  backgroundColor: '#121212',
-  borderRadius: 5,
-  justifyContent: 'flex-end',
-  paddingBottom: 8
-})
-const Title = styled.Text({
-  padding: 4,
-  color: '#FFF',
-  fontWeight: 'bold',
-  textAlign: 'center'
-})
-const Logo = styled.Image({
-  width: '80%',
-  aspectRatio: 80 / 31,
-  resizeMode: 'cover'
-})
+const LoadingCard = ({ item }) => {
+  return (
+    <View style={styles.fallbackContainer}>
+      <Text style={styles.title}>{item.title}</Text>
+    </View>
+  )
+}
+
+const FallbackCard = ({ item, width }) => {
+  const [isError, setIsError] = useState(false)
+  const logoWidth = getImageWidth(width, 0.8)
+  return (
+    <View style={styles.fallbackContainer}>
+      {(!item.images.logo || isError) && <Title>{item.title}</Title>}
+      {item.images.logo && !isError && (
+        <Image
+          style={styles.logo}
+          source={{
+            uri: getImageUrl(item.images.logo, {
+              w: logoWidth,
+              h: Math.ceil((logoWidth * 31) / 80)
+            })
+          }}
+          onError={() => setIsError(true)}
+        />
+      )}
+    </View>
+  )
+}
+
+const PosterCard = ({ item, width }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const imageWidth = getImageWidth(width)
+
+  return (
+    <View style={[styles.container, { width }]}>
+      {item.images.poster && !isError && !isLoaded && (
+        <LoadingCard item={item} />
+      )}
+      {item.images.poster && !isError && (
+        <Image
+          style={styles.posterImage}
+          source={{
+            uri: getImageUrl(item.images.poster, {
+              w: imageWidth,
+              h: Math.ceil(imageWidth * 1.426),
+              fit: 'cover'
+            })
+          }}
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setIsError(true)}
+        />
+      )}
+      {(!item.images.poster || isError) && (
+        <FallbackCard item={item} width={width} />
+      )}
+    </View>
+  )
+}
 
 function getImageWidth(width, scale = 1) {
   const imageWidths = [240, 480, 720, 1200, 1440, 1680, 1920]
@@ -65,59 +81,45 @@ function getImageUrl(imageUrl, imageParams = {}) {
   return `https://images.weserv.nl/${qs.stringify(params, true)}`
 }
 
-const LoadingCard = ({ item }) => {
-  return (
-    <FallbackContainer>
-      <Title>{item.title}</Title>
-    </FallbackContainer>
-  )
-}
-
-const FallbackCard = ({ item, width }) => {
-  const [isError, setIsError] = useState(false)
-  const logoWidth = getImageWidth(width, 0.8)
-  return (
-    <FallbackContainer>
-      {(!item.images.logo || isError) && <Title>{item.title}</Title>}
-      {item.images.logo && !isError && (
-        <Logo
-          source={{
-            uri: getImageUrl(item.images.logo, {
-              w: logoWidth,
-              h: Math.ceil(logoWidth * 31 / 80)
-            })
-          }}
-          onError={() => setIsError(true)}
-        />
-      )}
-    </FallbackContainer>
-  )
-}
-
-const PosterCard = ({ item, width }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isError, setIsError] = useState(false)
-  const imageWidth = getImageWidth(width)
-
-  return (
-    <Container width={width}>
-      {item.images.poster && !isError && !isLoaded && (
-        <LoadingCard item={item} />
-      )}
-      {item.images.poster && !isError && (
-        <PosterImage
-          source={{ uri: getImageUrl(item.images.poster, {
-            w: imageWidth,
-            h: Math.ceil(imageWidth * 1.426),
-            fit: 'cover'
-          }) }}
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setIsError(true)}
-        />
-      )}
-      {(!item.images.poster || isError) && <FallbackCard item={item} width={width} />}
-    </Container>
-  )
+const styles = {
+  container: {
+    aspectRatio: 1000 / 1426,
+    elevation: 2,
+    marginBottom: 1,
+    marginTop: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41
+  },
+  posterImage: {
+    flex: 1,
+    borderRadius: 5,
+    resizeMode: 'cover'
+  },
+  fallbackContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    alignItems: 'center',
+    backgroundColor: '#121212',
+    borderRadius: 5,
+    justifyContent: 'flex-end',
+    paddingBottom: 8
+  },
+  title: {
+    padding: 4,
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  logo: {
+    width: '80%',
+    aspectRatio: 80 / 31,
+    resizeMode: 'cover'
+  }
 }
 
 export default PosterCard

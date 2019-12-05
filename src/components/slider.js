@@ -1,30 +1,12 @@
 import { useQuery } from '@apollo/client'
-import styled from '@emotion/native'
 import React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { Paragraph, Subheading } from 'react-native-paper'
 import PosterCard from '../components/poster-card'
 import useLayout from '../hooks/layout'
-import { Subtitle, Title } from '../styles/text'
-
-const styles = StyleSheet.create({
-  contentContainerStyle: {
-    paddingLeft: 16,
-    paddingRight: 16
-  },
-  separator: {
-    width: 8
-  }
-})
-
-const Container = styled.View({
-  paddingTop: 4,
-  paddingBottom: 4,
-  paddingLeft: 16,
-  paddingRight: 16
-})
 
 const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
-  const { loading, error, networkStatus, data, fetchMore } = useQuery(query, {
+  const { error, networkStatus, data, fetchMore } = useQuery(query, {
     notifyOnNetworkStatusChange: true,
     variables: {
       page: 1
@@ -44,11 +26,11 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
 
   return (
     <>
-      <Container onLayout={onLayout}>
-        {title && <Title>{title}</Title>}
-        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+      <View style={styles.container} onLayout={onLayout}>
+        {title && <Subheading>{title}</Subheading>}
+        {subtitle && <Paragraph>{subtitle}</Paragraph>}
         {networkStatus === 1 && <Text>Loading...</Text>}
-      </Container>
+      </View>
       {networkStatus !== 1 && (
         <FlatList
           contentContainerStyle={styles.contentContainerStyle}
@@ -99,5 +81,21 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    paddingLeft: 16,
+    paddingRight: 16
+  },
+  contentContainerStyle: {
+    paddingLeft: 16,
+    paddingRight: 16
+  },
+  separator: {
+    width: 8
+  }
+})
 
 export default Slider
