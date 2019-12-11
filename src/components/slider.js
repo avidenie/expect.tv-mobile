@@ -1,39 +1,76 @@
 import { useQuery } from '@apollo/client'
 import React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { Paragraph, Subheading } from 'react-native-paper'
+import { Caption, Title } from 'react-native-paper'
+import { useSafeArea } from 'react-native-safe-area-context'
 import PosterCard from '../components/poster-card'
 import useLayout from '../hooks/layout'
 
-const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
+const PADDING_LEFT = 16
+const PADDING_RIGHT = 40
+const SEPARATOR_WIDTH = 12
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 4,
+    paddingBottom: 4
+  },
+  separator: {
+    width: SEPARATOR_WIDTH
+  }
+})
+
+const Slider = ({
+  query,
+  contentKey,
+  title,
+  subtitle,
+  onPress,
+  compact = false
+}) => {
+  // paddings
+  const insets = useSafeArea()
+  const paddingLeft = PADDING_LEFT + insets.left
+  const paddingRight = PADDING_RIGHT + insets.right
+  const paddings = {
+    paddingLeft,
+    paddingRight
+  }
+
+  // columns
+  const [{ width }, onLayout] = useLayout()
+  const columns = compact ? (width >= 600 ? 8 : 4) : width >= 600 ? 6 : 3
+  const columnWidth =
+    (width - (paddingLeft + paddingRight) - (columns - 1) * SEPARATOR_WIDTH) /
+    columns
+
+  // query
   const { error, networkStatus, data, fetchMore } = useQuery(query, {
     notifyOnNetworkStatusChange: true,
     variables: {
       page: 1
     }
   })
-  const [{ width }, onLayout] = useLayout()
-  const columns = compact ? (width >= 600 ? 8 : 4) : width >= 600 ? 6 : 3
-  const columnWidth = (width - 32 - (columns - 1) * 8) / columns
 
+  // basic error handling
   if (error) {
     return (
-      <Container>
+      <View style={styles.container}>
         <Text>Error! {error.message}</Text>
-      </Container>
+      </View>
     )
   }
 
   return (
     <>
-      <View style={styles.container} onLayout={onLayout}>
-        {title && <Subheading>{title}</Subheading>}
-        {subtitle && <Paragraph>{subtitle}</Paragraph>}
+      <View style={[styles.container, paddings]} onLayout={onLayout}>
+        {title && <Title>{title}</Title>}
+        {subtitle && <Caption>{subtitle}</Caption>}
         {networkStatus === 1 && <Text>Loading...</Text>}
       </View>
       {networkStatus !== 1 && (
         <FlatList
-          contentContainerStyle={styles.contentContainerStyle}
+          contentContainerStyle={paddings}
           data={data[contentKey].results}
           decelerationRate="fast"
           horizontal={true}
@@ -41,7 +78,7 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={item => item.tmdbId.toString()}
           renderItem={({ item }) => (
-            <PosterCard item={item} width={columnWidth} />
+            <PosterCard item={item} width={columnWidth} onPress={onPress} />
           )}
           showsHorizontalScrollIndicator={false}
           snapToInterval={columnWidth + 8}
@@ -81,21 +118,5 @@ const Slider = ({ query, contentKey, title, subtitle, compact = false }) => {
     </>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    paddingLeft: 16,
-    paddingRight: 16
-  },
-  contentContainerStyle: {
-    paddingLeft: 16,
-    paddingRight: 16
-  },
-  separator: {
-    width: 8
-  }
-})
 
 export default Slider
