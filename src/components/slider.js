@@ -26,6 +26,8 @@ const Slider = ({
   title,
   subtitle,
   onPress,
+  style,
+  variables,
   compact = false
 }) => {
   // paddings
@@ -48,6 +50,7 @@ const Slider = ({
   const { error, networkStatus, data, fetchMore } = useQuery(query, {
     notifyOnNetworkStatusChange: true,
     variables: {
+      ...variables,
       page: 1
     }
   })
@@ -62,7 +65,7 @@ const Slider = ({
   }
 
   return (
-    <>
+    <View style={style}>
       <View style={[styles.container, paddings]} onLayout={onLayout}>
         {title && <Title>{title}</Title>}
         {subtitle && <Caption>{subtitle}</Caption>}
@@ -91,6 +94,7 @@ const Slider = ({
             ) {
               fetchMore({
                 variables: {
+                  ...variables,
                   page: data[contentKey].pageInfo.page + 1
                 },
                 updateQuery: (prev, { fetchMoreResult }) => {
@@ -115,7 +119,7 @@ const Slider = ({
           }}
         />
       )}
-    </>
+    </View>
   )
 }
 

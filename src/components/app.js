@@ -2,7 +2,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { NavigationNativeContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import { StatusBar } from 'react-native'
+import { StatusBar, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MovieDetails from './movie-details'
@@ -50,7 +50,7 @@ function DiscoverTab() {
         name="DiscoverMovieDetails"
         component={MovieDetails}
         options={{
-          title: 'Movie Details'
+          title: ''
         }}
       />
       <DiscoverStack.Screen

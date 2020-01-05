@@ -13,7 +13,8 @@ function Movies() {
         subtitle="List updates daily"
         query={GET_POPULAR_MOVIES}
         contentKey="popularMovies"
-        onPress={() => navigation.navigate('MovieDetails')}
+        onPress={tmdbId => () =>
+          navigation.navigate('MovieDetails', { tmdbId })}
       />
     </ScrollView>
   )

@@ -13,7 +13,8 @@ function TvShows() {
         query={GET_POPULAR_TV_SHOWS}
         contentKey="popularTvShows"
         compact={true}
-        onPress={() => navigation.navigate('TvShowDetails')}
+        onPress={tmdbId => () =>
+          navigation.navigate('TvShowDetails', { tmdbId })}
       />
     </ScrollView>
   )

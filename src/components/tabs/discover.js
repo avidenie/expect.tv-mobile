@@ -19,7 +19,8 @@ function Discover() {
         subtitle="List updates daily"
         query={GET_POPULAR_MOVIES}
         contentKey="popularMovies"
-        onPress={() => navigation.navigate('DiscoverMovieDetails')}
+        onPress={tmdbId => () =>
+          navigation.navigate('DiscoverMovieDetails', { tmdbId })}
       />
       <View style={styles.divider} />
       <Slider
@@ -27,7 +28,8 @@ function Discover() {
         query={GET_POPULAR_TV_SHOWS}
         contentKey="popularTvShows"
         compact={true}
-        onPress={() => navigation.navigate('DiscoverTvShowDetails')}
+        onPress={tmdbId => () =>
+          navigation.navigate('DiscoverTvShowDetails', { tmdbId })}
       />
     </ScrollView>
   )

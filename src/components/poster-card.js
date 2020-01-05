@@ -115,7 +115,8 @@ function PosterCard({ item, width, onPress }) {
   const imageWidth = getImageWidth(width)
 
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
+    <TouchableWithoutFeedback
+      onPress={onPress ? onPress(item.tmdbId) : undefined}>
       <View style={[styles.container, { width }]}>
         {item.images.poster && !isError && !isLoaded && (
           <LoadingCard item={item} />
