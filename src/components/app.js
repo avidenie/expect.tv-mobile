@@ -1,16 +1,15 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import { NavigationNativeContainer } from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import { StatusBar, View } from 'react-native'
-import { useTheme } from 'react-native-paper'
+import { StatusBar } from 'react-native'
+import { overlay, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MovieDetails from './movie-details'
 import Discover from './tabs/discover'
 import Movies from './tabs/movies'
 import TvShows from './tabs/tv-shows'
 import TvShowDetails from './tv-show-details'
-import { overlay } from 'react-native-paper'
 
 function getBackgroundColor(theme) {
   return theme.dark ? overlay(4, theme.colors.surface) : theme.colors.surface
@@ -176,13 +175,13 @@ function RootStack() {
 function App() {
   const theme = useTheme()
   return (
-    <NavigationNativeContainer>
+    <NavigationContainer>
       <StatusBar
         backgroundColor={getBackgroundColor(theme)}
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
       <RootStack />
-    </NavigationNativeContainer>
+    </NavigationContainer>
   )
 }
 
